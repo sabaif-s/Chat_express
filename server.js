@@ -64,8 +64,11 @@ chatNamespace.on("connection", (socket) => {
     // Handle send_message event
     socket.on("send_message", (message) => {
         console.log(`Message received in /chat: ${message}`);
-        chatNamespace.emit("new_message", message); // Broadcast in /chat namespace
+        socket.broadcast.emit("new_message", message); // Broadcast in /chat namespace
     });
+    socket.on("register_chats",(data)=>{
+        console.log("two users",data);
+    })
 
     // Detect disconnection in the /chat namespace
     socket.on("disconnect", () => {
