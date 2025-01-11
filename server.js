@@ -1,9 +1,56 @@
 const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
-
 const app = express();
 const server = http.createServer(app);
+const bodyParser = require("body-parser");
+const mongoose = require("mongoose");
+const cors = require("cors");
+const registerRouter=require("./routes/registerRoute");
+const Chat = require("./models/chat"); // Import the Chat model
+const corsOptions = {
+    origin: "http://localhost:3000",  // Specify the frontend URL explicitly
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"], // Custom headers
+    credentials: true,  // Allow credentials (cookies, authorization headers, etc.)
+  };
+  app.use(cors(corsOptions));
+app.use(bodyParser.json());
+app.use("/register",registerRouter);
+// Connect to MongoDB
+mongoose.connect("mongodb://localhost:27017/chatApp", {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+
+
+  
+//   app.options('*', cors(corsOptions));
+
+const db = mongoose.connection;
+db.on("error", console.error.bind(console, "MongoDB connection error:"));
+db.once("open", () => {
+  console.log("MongoDB connected successfully!");
+
+  // Example: Saving a new chat message
+  const newChat = new Chat({
+    username: "Alice",
+    message: "Hello, world!",
+  });
+
+  newChat.save()
+    .then(() => console.log("Chat message saved!"))
+    .catch((err) => console.error("Error saving chat message:", err));
+});
+// Setup MongoDB Connection
+ 
+
+// Chat Schema and Model
+ 
+
+ app.get("/",(req,res)=>{
+    res.send("in router");
+ });
 
 const io = new Server(server, {
     cors: {
