@@ -105,6 +105,31 @@ io.on("connection", (socket) => {
         console.log(`Active users: ${count}`);
     });
 });
+const roomNamespace = io.of("/room");
+
+roomNamespace.on("connection", (socket) => {
+  console.log(`User connected to /room namespace: ${socket.id}`);
+
+  // Join a room
+  socket.on("joinRoom", (roomName) => {
+    socket.join(roomName);
+    console.log(`${socket.id} joined room: ${roomName}`);
+
+    // Notify other users in the room
+    roomNamespace.to(roomName).emit("message", `${socket.id} has joined the room`);
+  });
+
+  // Listen for messages in a room
+  socket.on("message", ({ roomName, message }) => {
+    console.log(`Message in room ${roomName}: ${message}`);
+    roomNamespace.to(roomName).emit("message", { sender: socket.id, message });
+  });
+
+  // Handle disconnect
+  socket.on("disconnect", () => {
+    console.log(`User disconnected from /room namespace: ${socket.id}`);
+  });
+});
 
 // Chat namespace logic
 const chatNamespace = io.of("/chat");
