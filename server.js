@@ -7,6 +7,8 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const registerRouter=require("./routes/registerRoute");
+const createChatRouter=require("./routes/createRoute");
+const chatRoomCheck=require("./routes/checkRoom");
 const Chat = require("./models/chat"); // Import the Chat model
 const corsOptions = {
     origin: "http://localhost:3000",  // Specify the frontend URL explicitly
@@ -17,6 +19,8 @@ const corsOptions = {
   app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use("/register",registerRouter);
+app.use("/createChat",createChatRouter);
+app.use("/checkChat",chatRoomCheck);
 // Connect to MongoDB
 mongoose.connect("mongodb://localhost:27017/chatApp", {
   useNewUrlParser: true,
