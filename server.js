@@ -138,9 +138,11 @@ chatNamespace.on("connection", (socket) => {
     console.log("User connected to /chat namespace:", socket.id);
 
     // Handle send_message event
-    socket.on("send_message", (message) => {
-        console.log(`Message received in /chat: ${message}`);
-        socket.broadcast.emit("new_message", message); // Broadcast in /chat namespace
+    socket.on("send_message", (data) => {
+        console.log(`Message received in /chat: ${data.message}`);
+        console.log(data.room);
+       socket.join(data.room);
+       socket.to(data.room).emit("new_message", data);// Broadcast in /chat namespace
     });
     socket.on("register_chats",(data)=>{
         console.log("two users",data);
