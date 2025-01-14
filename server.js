@@ -9,6 +9,8 @@ const cors = require("cors");
 const registerRouter=require("./routes/registerRoute");
 const createChatRouter=require("./routes/createRoute");
 const chatRoomCheck=require("./routes/checkRoom");
+const chatRoute=require("./routes/chatRoute");
+const Message=require("./models/Message");
 const Chat = require("./models/chat"); // Import the Chat model
 const corsOptions = {
     origin: "http://localhost:3000",  // Specify the frontend URL explicitly
@@ -21,6 +23,7 @@ app.use(bodyParser.json());
 app.use("/register",registerRouter);
 app.use("/createChat",createChatRouter);
 app.use("/checkChat",chatRoomCheck);
+app.use("/chat",chatRoute);
 // Connect to MongoDB
 mongoose.connect("mongodb://localhost:27017/chatApp", {
   useNewUrlParser: true,
@@ -131,24 +134,81 @@ roomNamespace.on("connection", (socket) => {
   });
 });
 
-// Chat namespace logic
+const insertMessage = async (sender, room, message) => {
+    try {
+        const newMessage = new Message({
+            messages: {
+                sender,
+                room,
+                message: [
+                    {
+                        content:message,
+                        timestamp: new Date(),
+                    },
+                ],
+                timestamp: new Date(),
+            },
+        });
+
+        // Save to the database
+        const savedMessage = await newMessage.save();
+        console.log("Message saved:", savedMessage);
+        return savedMessage; // Return the saved message
+    } catch (err) {
+        console.error("Error saving new message:", err);
+        throw err; // Throw error to handle it in the caller
+    }
+};
+
+const updateMessage = async (foundMessage, newMessage) => {
+    try {
+        foundMessage.messages.message.push({
+            content: newMessage,
+            timestamp: new Date(),
+        });
+        
+        // Add the new message
+        const updatedMessage = await foundMessage.save();
+        console.log("Message updated:", updatedMessage);
+        return updatedMessage; // Return the updated message
+    } catch (err) {
+        console.error("Error updating message:", err);
+        throw err; // Throw error to handle it in the caller
+    }
+};
+
 const chatNamespace = io.of("/chat");
 
 chatNamespace.on("connection", (socket) => {
     console.log("User connected to /chat namespace:", socket.id);
 
-    // Handle send_message event
-    socket.on("send_message", (data) => {
+    socket.on("send_message", async (data) => {
         console.log(`Message received in /chat: ${data.message}`);
-        console.log(data.room);
-       socket.join(data.room);
-       socket.to(data.room).emit("new_message", data);// Broadcast in /chat namespace
-    });
-    socket.on("register_chats",(data)=>{
-        console.log("two users",data);
-    })
+        try {
+            const foundMessage = await Message.findOne({
+                "messages.room": data.room,
+                "messages.sender": data.sender,
+            });
 
-    // Detect disconnection in the /chat namespace
+            if (foundMessage) {
+                await updateMessage(foundMessage, data.message);
+            } else {
+                await insertMessage(data.sender, data.room, data.message);
+            }
+
+            // Join the room and broadcast the message
+            socket.join(data.room);
+            socket.to(data.room).emit("new_message", data);
+        } catch (err) {
+            console.error("Error handling message:", err);
+            socket.emit("error_message", { error: "Failed to handle message" }); // Notify the client about the error
+        }
+    });
+
+    socket.on("register_chats", (data) => {
+        console.log("Two users registered:", data);
+    });
+
     socket.on("disconnect", () => {
         console.log(`User disconnected from /chat namespace: ${socket.id}`);
     });
