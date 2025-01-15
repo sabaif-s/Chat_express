@@ -34,7 +34,7 @@ router.post('/', async (req, res) => {
 
     // Generate a unique link
     const randomLinkGenerate = await generateRandomString();
-    const generatedLink = `http://localhost:3000/room/${randomLinkGenerate}`;
+    const generatedLink = `https://chat-app-kappa-two-83.vercel.app/room/${randomLinkGenerate}`;
 
     // Create a new chat room
     const newChatRoom = new ChatRoom({
