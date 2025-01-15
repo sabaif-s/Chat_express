@@ -183,7 +183,7 @@ chatNamespace.on("connection", (socket) => {
     console.log("User connected to /chat namespace:", socket.id);
 
     socket.on("send_message", async (data) => {
-        console.log(`Message received in /chat: ${data.message}`);
+        console.log(`Message received in /chat: ${data.message} ${socket.id}`);
         try {
             const foundMessage = await Message.findOne({
                 "messages.room": data.room,
