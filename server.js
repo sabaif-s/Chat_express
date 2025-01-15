@@ -204,6 +204,19 @@ chatNamespace.on("connection", (socket) => {
             socket.emit("error_message", { error: "Failed to handle message" }); // Notify the client about the error
         }
     });
+    socket.on("typing",(data)=>{
+        console.log("typing in :",data);
+        socket.join(data.room);
+        if(data.typing == true){
+            socket.to(data.room).emit("typing",true);
+        }
+        else{
+            socket.to(data.room).emit("typing",false);
+  
+        }
+        
+        
+    });
 
     socket.on("register_chats", (data) => {
         console.log("Two users registered:", data);

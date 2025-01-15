@@ -25,7 +25,8 @@ router.get(`/messages/:room`, async (req, res) => {
         const arrayObject=messages.map((item)=> {
             return {
                 sender:item.messages.sender,
-                message:item.messages.message.content
+                message:item.messages.message.content,
+                time:item.messages.message.timestamp
             }
         })
         console.log(arrayObject);
