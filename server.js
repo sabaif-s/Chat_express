@@ -13,7 +13,7 @@ const chatRoute=require("./routes/chatRoute");
 const Message=require("./models/Message");
 const Chat = require("./models/chat"); // Import the Chat model
 const corsOptions = {
-    origin: "http://localhost:3000",  // Specify the frontend URL explicitly
+    origin: ["http://localhost:3000", "https://chat-app-kappa-two-83.vercel.app/"],  // Specify the frontend URL explicitly
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"], // Custom headers
     credentials: true,  // Allow credentials (cookies, authorization headers, etc.)
