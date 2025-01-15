@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
@@ -25,7 +26,7 @@ app.use("/createChat",createChatRouter);
 app.use("/checkChat",chatRoomCheck);
 app.use("/chat",chatRoute);
 // Connect to MongoDB
-mongoose.connect("mongodb+srv://sebaifmuhammed4798:sabaifNewPassword@sabaif0.1pawt.mongodb.net/chat_app", {
+mongoose.connect(process.env.mongoDB, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
