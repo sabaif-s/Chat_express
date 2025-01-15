@@ -25,7 +25,7 @@ app.use("/createChat",createChatRouter);
 app.use("/checkChat",chatRoomCheck);
 app.use("/chat",chatRoute);
 // Connect to MongoDB
-mongoose.connect("mongodb://localhost:27017/chatApp", {
+mongoose.connect("mongodb+srv://sebaifmuhammed4798:sabaifNewPassword@sabaif0.1pawt.mongodb.net/chat_app", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });

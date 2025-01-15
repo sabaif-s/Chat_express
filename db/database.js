@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 // Replace the URI with your MongoDB connection string
-const mongoURI = "mongodb://localhost:27017/chatApp"; // For local MongoDB
+const mongoURI = "mongodb+srv://sebaifmuhammed4798:sabaifNewPassword@sabaif0.1pawt.mongodb.net/chat_app"; // For local MongoDB
 // Example for cloud MongoDB: 'mongodb+srv://<username>:<password>@cluster.mongodb.net/<dbname>'
 
 mongoose.connect(mongoURI, {
