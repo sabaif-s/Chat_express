@@ -37,19 +37,7 @@ mongoose.connect(process.env.mongoDB, {
 
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "MongoDB connection error:"));
-db.once("open", () => {
-  console.log("MongoDB connected successfully!");
-
-  // Example: Saving a new chat message
-  const newChat = new Chat({
-    username: "Alice",
-    message: "Hello, world!",
-  });
-
-  newChat.save()
-    .then(() => console.log("Chat message saved!"))
-    .catch((err) => console.error("Error saving chat message:", err));
-});
+ 
 // Setup MongoDB Connection
  
 
